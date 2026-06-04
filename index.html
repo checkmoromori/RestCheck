@@ -317,7 +317,7 @@
 </div>
 
 <script>
-const API_KEY = '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';
+const API_KEY = 'AQ.Ab8RN6JUTXEuLZZFOiGjASXdlnsNUojAdPBmizDNSjnFwlnRWA';
 const SYSTEM_PROMPT = `Du bist ein Restaurant-Analyse-Assistent. Wenn du einen Ortsnamen, Restaurant-Namen oder Google Maps Link bekommst, analysierst du das Restaurant und gibst eine kompakte Auswertung auf Deutsch aus.
 
 Format der Ausgabe — exakt so, keine Einleitungen, keine Quellenlinks, kein Markdown:
@@ -423,31 +423,24 @@ async function analyze() {
   }
 
   try {
-    // Groq unterstützt keine Bilder – Fallback auf Text
-    const userText = parts.map(p => p.text || '[Foto eingereicht]').join(' ');
-
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userText }
-        ],
-        temperature: 0.4,
-        max_tokens: 1000
-      })
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{ role: 'user', parts }],
+          generationConfig: { temperature: 0.4, maxOutputTokens: 1000 }
+        })
+      }
+    );
     if (!response.ok) {
       const err = await response.json();
       throw new Error(err.error?.message || `HTTP ${response.status}`);
     }
     const data = await response.json();
-    const text = data.choices?.[0]?.message?.content;
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('Keine Antwort erhalten.');
     showResult(text);
   } catch (e) {
