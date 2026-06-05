@@ -317,7 +317,7 @@
 </div>
 
 <script>
-const API_KEY = 'AQ.Ab8RN6JUTXEuLZZFOiGjASXdlnsNUojAdPBmizDNSjnFwlnRWA';
+const API_KEY = 'AIzaSyD6r0KSkRysvhRkwQ2R_LfOSBBAkatHmz8';
 const SYSTEM_PROMPT = `Du bist ein Restaurant-Analyse-Assistent. Wenn du einen Ortsnamen, Restaurant-Namen oder Google Maps Link bekommst, analysierst du das Restaurant und gibst eine kompakte Auswertung auf Deutsch aus.
 
 Format der Ausgabe — exakt so, keine Einleitungen, keine Quellenlinks, kein Markdown:
@@ -431,6 +431,7 @@ async function analyze() {
         body: JSON.stringify({
           system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
           contents: [{ role: 'user', parts }],
+          tools: [{ google_search: {} }],
           generationConfig: { temperature: 0.4, maxOutputTokens: 1000 }
         })
       }
