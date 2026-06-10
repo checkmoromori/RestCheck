@@ -3,268 +3,253 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RestCheck - Restaurant Kritiker</title>
+  <title>RestCheck - Der Gourmet-Kritiker</title>
   <style>
     :root {
-      --bg-color: #faf6f0; /* Edles, warmes Cremeweiß */
+      --bg-color: #fcfbfa;
       --card-bg: #ffffff;
-      --text-color: #1e293b; /* Schickes Schiefer-Dunkelgrau */
-      --primary: #d97706; /* Warmes Gourmet-Bernstein/Orange */
-      --primary-hover: #b45309;
-      --border: #e2e8f0;
-      --accent-green: #10b981;
-      --accent-red: #ef4444;
+      --text-main: #1c1917;
+      --text-muted: #57534e;
+      --primary-gold: #c2410c;
+      --accent-gold: #b45309;
+      --border-color: #f5f5f4;
+      --shadow-premium: 0 20px 40px rgba(28, 25, 16, 0.04);
     }
-    
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      padding: 20px;
+      background: radial-gradient(circle at top, #ffffff 0%, var(--bg-color) 100%);
+      color: var(--text-main);
+      padding: 24px;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
     }
-
     .container {
       background: var(--card-bg);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(217, 119, 6, 0.08); /* Sanfter bernsteinfarbener Schatten */
+      padding: 35px 30px;
+      border-radius: 24px;
+      box-shadow: var(--shadow-premium);
       width: 100%;
       max-width: 500px;
-      border: 1px solid rgba(217, 119, 6, 0.1);
+      border: 1px solid rgba(194, 65, 12, 0.06);
+      position: relative;
     }
-
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--primary-gold), var(--accent-gold));
+      border-radius: 24px 24px 0 0;
+    }
     header {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
-
     h1 {
-      font-size: 28px;
-      color: var(--primary);
+      font-family: "Georgia", serif;
+      font-size: 30px;
       font-weight: 800;
-      letter-spacing: -0.5px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
     }
-
+    h1 span { color: var(--primary-gold); }
     .subtitle {
-      font-size: 14px;
-      color: #64748b;
-      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
     }
-
-    .input-group {
-      margin-bottom: 18px;
-    }
-
+    .input-group { margin-bottom: 18px; }
     label {
       display: block;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
       margin-bottom: 6px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #64748b;
+      letter-spacing: 1px;
+      color: var(--text-muted);
     }
-
-    .input-wrapper {
-      position: relative;
-    }
-
+    .input-wrapper { position: relative; }
     .input-icon {
       position: absolute;
-      left: 12px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
       font-size: 16px;
     }
-
     input[type="text"] {
       width: 100%;
-      padding: 12px 12px 12px 38px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
+      padding: 12px 12px 12px 42px;
+      border: 1.5px solid #e7e5e4;
+      border-radius: 12px;
       font-size: 15px;
       outline: none;
-      transition: all 0.2s ease;
-      background: #f8fafc;
+      transition: all 0.2s;
+      background: #fafaf9;
     }
-
     input[type="text"]:focus {
-      border-color: var(--primary);
+      border-color: var(--accent-gold);
       background: #fff;
-      box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+      box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1);
     }
-
     .file-buttons {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-bottom: 18px;
     }
-
     .file-btn {
       background: #fff;
-      border: 1.5px dashed var(--primary);
-      color: var(--primary);
-      padding: 14px;
-      border-radius: 10px;
+      border: 1.5px solid #e7e5e4;
+      padding: 12px;
+      border-radius: 12px;
       cursor: pointer;
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
+      gap: 4px;
+      transition: all 0.2s;
     }
-
     .file-btn:hover {
-      background: rgba(217, 119, 6, 0.04);
-      transform: translateY(-1px);
+      border-color: var(--accent-gold);
+      background: rgba(180, 83, 9, 0.02);
     }
-
     .file-btn.has-photo {
       background: #f0fdf4;
-      border-color: var(--accent-green);
-      color: #15803d;
+      border-color: #16a34a;
+      color: #14532d;
     }
-
-    input[type="file"] {
-      display: none;
-    }
-
+    input[type="file"] { display: none; }
     #previewImg {
       width: 100%;
-      max-height: 200px;
+      max-height: 180px;
       object-fit: cover;
       border-radius: 12px;
       margin-bottom: 18px;
       display: none;
-      border: 2px solid var(--border);
+      border: 2px solid #e7e5e4;
     }
-
     button.submit-btn {
       width: 100%;
       padding: 14px;
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary-gold) 0%, var(--accent-gold) 100%);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 16px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(194, 65, 12, 0.15);
     }
-
     button.submit-btn:hover {
-      background: var(--primary-hover);
       transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(217, 119, 6, 0.3);
+      box-shadow: 0 6px 20px rgba(194, 65, 12, 0.2);
     }
-
     #output {
       margin-top: 25px;
-      padding: 20px;
-      border-radius: 14px;
-      background: #fff;
-      border: 1px solid rgba(217, 119, 6, 0.15);
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+      padding: 22px;
+      border-radius: 18px;
+      background: #fffdfa;
+      border: 1px solid rgba(180, 83, 9, 0.12);
       display: none;
       line-height: 1.6;
     }
-
-    /* Styling für das fertige Gastro-Review */
     .review-header {
-      border-bottom: 2px solid #f1f5f9;
+      border-bottom: 2px solid #f5f5f4;
       padding-bottom: 12px;
       margin-bottom: 15px;
+      text-align: center;
     }
-
     .review-title {
-      font-size: 20px;
+      font-family: "Georgia", serif;
+      font-size: 22px;
       font-weight: 800;
-      color: var(--primary);
     }
-
     .review-badge {
       display: inline-block;
       background: #fef3c7;
-      color: #92400e;
-      padding: 3px 8px;
-      border-radius: 6px;
+      color: #78350f;
+      padding: 3px 10px;
+      border-radius: 20px;
       font-size: 11px;
       font-weight: 700;
-      margin-top: 5px;
+      margin-top: 6px;
       text-transform: uppercase;
     }
-
+    .review-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 15px;
+      background: #fafaf9;
+      padding: 12px;
+      border-radius: 10px;
+    }
     .review-meta-item {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 8px 0;
-      font-size: 14px;
+      font-size: 13.5px;
     }
-
-    .review-section {
-      margin-top: 15px;
+    .review-meta-item strong {
+      color: var(--text-muted);
+      width: 100px;
     }
-
+    .review-section { margin-top: 15px; }
     .review-section-title {
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 800;
       text-transform: uppercase;
-      color: #64748b;
       margin-bottom: 6px;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
     }
-
-    .review-list {
-      padding-left: 20px;
+    .review-bullets {
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      border-left: 4px solid #e7e5e4;
     }
-
+    .review-bullets.positive {
+      border-left-color: #10b981;
+      background: #f0fdf4;
+      color: #14532d;
+    }
+    .review-bullets.negative {
+      border-left-color: #ef4444;
+      background: #fdf2f2;
+      color: #7f1d1d;
+    }
     .review-fazit-box {
       background: #fffbeb;
-      border-left: 4px solid var(--primary);
-      padding: 12px;
-      border-radius: 0 8px 8px 0;
-      margin-top: 15px;
+      border-left: 4px solid var(--accent-gold);
+      padding: 14px;
+      border-radius: 0 10px 10px 0;
       font-style: italic;
+      font-size: 13.5px;
+      color: #78350f;
     }
-
     .loading-spinner {
       text-align: center;
-      color: #d97706;
+      color: var(--accent-gold);
       margin-top: 20px;
       display: none;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 15px;
-    }
-
-    .loading-spinner::after {
-      content: '...';
-      animation: dots 1.5s infinite;
-    }
-
-    @keyframes dots {
-      0%, 20% { content: '.'; }
-      40% { content: '..'; }
-      60%, 100% { content: '...'; }
     }
   </style>
 </head>
@@ -272,8 +257,8 @@
 
 <div class="container">
   <header>
-    <h1>🍽️ RestCheck</h1>
-    <div class="subtitle">Dein persönlicher Gastro-Kritiker</div>
+    <h1>🍽️ Rest<span>Check</span></h1>
+    <div class="subtitle">Gourmet-Kritiken in Echtzeit</div>
   </header>
   
   <div class="input-group">
@@ -315,7 +300,7 @@
 
   <button class="submit-btn" onclick="analyze()">Kritik erstellen</button>
 
-  <div class="loading-spinner" id="spinner">Gourmet-Kritiker sucht im Web</div>
+  <div class="loading-spinner" id="spinner">Der Gourmet-Kritiker recherchiert...</div>
   <div id="output"></div>
 </div>
 
@@ -324,7 +309,6 @@ const SYSTEM_PROMPT = "Du bist ein erfahrener Restaurant-Kritiker. Analysiere da
 
 let photoBase64 = null, photoMime = null;
 
-// Foto-Upload verarbeiten
 function handlePhoto(input) {
   const file = input.files[0];
   if (!file) return;
@@ -333,13 +317,10 @@ function handlePhoto(input) {
     const dataUrl = e.target.result;
     photoBase64 = dataUrl.split(',')[1];
     photoMime = file.type;
-    
-    // Bild-Vorschau anzeigen
     const preview = document.getElementById('previewImg');
     preview.src = dataUrl;
     preview.style.display = 'block';
     
-    // Knöpfe grün färben
     document.getElementById('cameraBtn').classList.add('has-photo');
     document.getElementById('galleryBtn').classList.add('has-photo');
     document.getElementById('cameraBtn').innerHTML = '<span>✓</span><span>Schild geladen</span>';
@@ -348,7 +329,6 @@ function handlePhoto(input) {
   reader.readAsDataURL(file);
 }
 
-// Lade-Anzeige umschalten
 function setLoading(message) {
   const spinner = document.getElementById('spinner');
   const output = document.getElementById('output');
@@ -361,7 +341,6 @@ function setLoading(message) {
   }
 }
 
-// Ergebnis anzeigen
 function showResult(text) {
   setLoading(false);
   const output = document.getElementById('output');
@@ -369,21 +348,18 @@ function showResult(text) {
   output.style.display = 'block';
 }
 
-// Fehler anzeigen
 function showError(message) {
   setLoading(false);
   const output = document.getElementById('output');
-  output.innerHTML = `<div style="color: #dc2626; font-weight: 600; padding: 10px; background: #fef2f2; border-radius: 8px; border: 1px solid #fee2e2;">⚠️ ${message}</div>`;
+  output.innerHTML = `<div style="color: #b91c1c; font-weight:600; padding:12px; background:#fdf2f2; border-radius:10px; border:1px solid #fca5a5; font-size:13px;">⚠️ ${message}</div>`;
   output.style.display = 'block';
 }
 
-// Die Hauptanalyse
 async function analyze() {
   const name = document.getElementById('nameInput').value.trim();
   let city = document.getElementById('cityInput').value.trim();
   const link = document.getElementById('linkInput').value.trim();
   
-  // ZWINGENDE ABFRAGE: Wenn ein Foto da ist, aber kein Ort eingegeben wurde
   if (photoBase64 && !city) {
     const urlaubsort = prompt("In welchem Ort oder Land befindet sich das Restaurant auf dem Foto?");
     if (urlaubsort) {
@@ -395,7 +371,7 @@ async function analyze() {
   const parts = [];
 
   if (photoBase64) {
-    setLoading('Schild wird entziffert...');
+    setLoading('Schild wird analysiert...');
     parts.push({ inlineData: { mimeType: photoMime, data: photoBase64 } });
     let textPart = 'Bitte lies den Restaurantnamen von diesem Schild ab.';
     if (city) textPart += ` Das Restaurant befindet sich in: ${city}.`;
@@ -403,10 +379,10 @@ async function analyze() {
     if (name) textPart += ` (Nutzerhinweis zum Namen: ${name})`;
     parts.push({ text: textPart });
   } else if (link) {
-    setLoading('Link wird analysiert...');
+    setLoading('Link wird verarbeitet...');
     parts.push({ text: `Analysiere diesen Google Maps Link: ${link}` });
   } else if (name) {
-    setLoading('Web-Recherche läuft...');
+    setLoading('Gourmet-Datenbank wird durchsucht...');
     let text = `Analysiere das Restaurant: ${name}`;
     if (city) text += ` in ${city}`;
     parts.push({ text });
@@ -457,7 +433,6 @@ async function analyze() {
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('Keine Antwort erhalten.');
     
-    // Text säubern (Verpackung von Gemini wegwerfen)
     let saubererText = text.trim();
     if (saubererText.startsWith("```")) {
       saubererText = saubererText.replace(/^
