@@ -6,12 +6,14 @@
   <title>RestCheck - Restaurant Kritiker</title>
   <style>
     :root {
-      --bg-color: #f4f6f9;
+      --bg-color: #faf6f0; /* Edles, warmes Cremeweiß */
       --card-bg: #ffffff;
-      --text-color: #2d3748;
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
+      --text-color: #1e293b; /* Schickes Schiefer-Dunkelgrau */
+      --primary: #d97706; /* Warmes Gourmet-Bernstein/Orange */
+      --primary-hover: #b45309;
       --border: #e2e8f0;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
     }
     
     * {
@@ -34,70 +36,111 @@
     .container {
       background: var(--card-bg);
       padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(217, 119, 6, 0.08); /* Sanfter bernsteinfarbener Schatten */
       width: 100%;
       max-width: 500px;
+      border: 1px solid rgba(217, 119, 6, 0.1);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
     }
 
     h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
-      text-align: center;
+      font-size: 28px;
       color: var(--primary);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #64748b;
+      margin-top: 4px;
     }
 
     .input-group {
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     label {
       display: block;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 700;
       margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
     }
 
     input[type="text"] {
       width: 100%;
-      padding: 12px;
+      padding: 12px 12px 12px 38px;
       border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-size: 16px;
+      border-radius: 10px;
+      font-size: 15px;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s ease;
+      background: #f8fafc;
     }
 
     input[type="text"]:focus {
       border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
     }
 
     .file-buttons {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
     .file-btn {
-      background: #f1f5f9;
-      border: 1.5px dashed #cbd5e1;
-      padding: 12px;
-      border-radius: 8px;
+      background: #fff;
+      border: 1.5px dashed var(--primary);
+      color: var(--primary);
+      padding: 14px;
+      border-radius: 10px;
       cursor: pointer;
       text-align: center;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .file-btn:hover {
+      background: rgba(217, 119, 6, 0.04);
+      transform: translateY(-1px);
     }
 
     .file-btn.has-photo {
-      background: #ecfdf5;
-      border-color: #10b981;
-      color: #065f46;
+      background: #f0fdf4;
+      border-color: var(--accent-green);
+      color: #15803d;
     }
 
     input[type="file"] {
@@ -106,12 +149,12 @@
 
     #previewImg {
       width: 100%;
-      max-height: 180px;
+      max-height: 200px;
       object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 15px;
+      border-radius: 12px;
+      margin-bottom: 18px;
       display: none;
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
     }
 
     button.submit-btn {
@@ -120,55 +163,141 @@
       background: var(--primary);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
     }
 
     button.submit-btn:hover {
       background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(217, 119, 6, 0.3);
     }
 
     #output {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 8px;
-      background: #f8fafc;
-      border-left: 4px solid var(--primary);
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid rgba(217, 119, 6, 0.15);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
       display: none;
-      white-space: pre-line;
       line-height: 1.6;
+    }
+
+    /* Styling für das fertige Gastro-Review */
+    .review-header {
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+    }
+
+    .review-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .review-badge {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 5px;
+      text-transform: uppercase;
+    }
+
+    .review-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+      font-size: 14px;
+    }
+
+    .review-section {
+      margin-top: 15px;
+    }
+
+    .review-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .review-list {
+      padding-left: 20px;
+    }
+
+    .review-fazit-box {
+      background: #fffbeb;
+      border-left: 4px solid var(--primary);
+      padding: 12px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 15px;
+      font-style: italic;
     }
 
     .loading-spinner {
       text-align: center;
-      color: #64748b;
-      margin-top: 15px;
+      color: #d97706;
+      margin-top: 20px;
       display: none;
-      font-weight: 500;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .loading-spinner::after {
+      content: '...';
+      animation: dots 1.5s infinite;
+    }
+
+    @keyframes dots {
+      0%, 20% { content: '.'; }
+      40% { content: '..'; }
+      60%, 100% { content: '...'; }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>🔍 RestCheck</h1>
+  <header>
+    <h1>🍽️ RestCheck</h1>
+    <div class="subtitle">Dein persönlicher Gastro-Kritiker</div>
+  </header>
   
   <div class="input-group">
     <label for="nameInput">Name des Restaurants</label>
-    <input type="text" id="nameInput" placeholder="Z. B. Aposto">
+    <div class="input-wrapper">
+      <span class="input-icon">🏢</span>
+      <input type="text" id="nameInput" placeholder="Z. B. Aposto">
+    </div>
   </div>
 
   <div class="input-group">
     <label for="cityInput">Ort / Stadt (Europaweit)</label>
-    <input type="text" id="cityInput" placeholder="Z. B. Aalen">
+    <div class="input-wrapper">
+      <span class="input-icon">📍</span>
+      <input type="text" id="cityInput" placeholder="Z. B. Aalen oder Rom">
+    </div>
   </div>
 
   <div class="input-group">
     <label for="linkInput">Google Maps Link (Alternativ)</label>
-    <input type="text" id="linkInput" placeholder="Link hier einfügen...">
+    <div class="input-wrapper">
+      <span class="input-icon">🔗</span>
+      <input type="text" id="linkInput" placeholder="Link hier einfügen...">
+    </div>
   </div>
 
   <div class="file-buttons">
@@ -184,9 +313,9 @@
 
   <img id="previewImg" alt="Vorschau">
 
-  <button class="submit-btn" onclick="analyze()">Prüfen</button>
+  <button class="submit-btn" onclick="analyze()">Kritik erstellen</button>
 
-  <div class="loading-spinner" id="spinner">Wird geladen...</div>
+  <div class="loading-spinner" id="spinner">Gourmet-Kritiker sucht im Web</div>
   <div id="output"></div>
 </div>
 
@@ -213,8 +342,8 @@ function handlePhoto(input) {
     // Knöpfe grün färben
     document.getElementById('cameraBtn').classList.add('has-photo');
     document.getElementById('galleryBtn').classList.add('has-photo');
-    document.getElementById('cameraBtn').innerHTML = '<span>✓</span><span>Foto geladen</span>';
-    document.getElementById('galleryBtn').innerHTML = '<span>✓</span><span>Foto geladen</span>';
+    document.getElementById('cameraBtn').innerHTML = '<span>✓</span><span>Schild geladen</span>';
+    document.getElementById('galleryBtn').innerHTML = '<span>✓</span><span>Schild geladen</span>';
   };
   reader.readAsDataURL(file);
 }
@@ -244,7 +373,7 @@ function showResult(text) {
 function showError(message) {
   setLoading(false);
   const output = document.getElementById('output');
-  output.innerHTML = `<span style="color: #dc2626; font-weight: 600;">⚠️ ${message}</span>`;
+  output.innerHTML = `<div style="color: #dc2626; font-weight: 600; padding: 10px; background: #fef2f2; border-radius: 8px; border: 1px solid #fee2e2;">⚠️ ${message}</div>`;
   output.style.display = 'block';
 }
 
@@ -266,7 +395,7 @@ async function analyze() {
   const parts = [];
 
   if (photoBase64) {
-    setLoading('Foto wird vorbereitet...');
+    setLoading('Schild wird entziffert...');
     parts.push({ inlineData: { mimeType: photoMime, data: photoBase64 } });
     let textPart = 'Bitte lies den Restaurantnamen von diesem Schild ab.';
     if (city) textPart += ` Das Restaurant befindet sich in: ${city}.`;
@@ -274,15 +403,15 @@ async function analyze() {
     if (name) textPart += ` (Nutzerhinweis zum Namen: ${name})`;
     parts.push({ text: textPart });
   } else if (link) {
-    setLoading('Link wird verarbeitet...');
+    setLoading('Link wird analysiert...');
     parts.push({ text: `Analysiere diesen Google Maps Link: ${link}` });
   } else if (name) {
-    setLoading('Bewertungen werden gesucht...');
+    setLoading('Web-Recherche läuft...');
     let text = `Analysiere das Restaurant: ${name}`;
     if (city) text += ` in ${city}`;
     parts.push({ text });
   } else {
-    showError('Bitte Name, Link oder Foto eingeben.');
+    showError('Bitte gib einen Restaurant-Namen, einen Link oder lade ein Foto hoch.');
     return;
   }
 
