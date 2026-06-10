@@ -6,14 +6,14 @@
   <title>RestCheck - Der Gourmet-Kritiker</title>
   <style>
     :root {
-      --bg-color: #fcfbfa;
+      --bg-color: #fdfcfb; /* Edles Creme-Weiß */
       --card-bg: #ffffff;
-      --text-main: #1c1917;
-      --text-muted: #57534e;
-      --primary-gold: #c2410c;
+      --text-main: #1c1917; /* Dunkles Antik-Schwarz */
+      --text-muted: #6b6661;
+      --primary-gold: #c2410c; /* Edles Terrakotta-Gold */
       --accent-gold: #b45309;
       --border-color: #f5f5f4;
-      --shadow-premium: 0 20px 40px rgba(28, 25, 16, 0.04);
+      --shadow-premium: 0 15px 35px rgba(28, 25, 16, 0.04);
     }
     * {
       box-sizing: border-box;
@@ -33,7 +33,7 @@
     .container {
       background: var(--card-bg);
       padding: 35px 30px;
-      border-radius: 24px;
+      border-radius: 20px;
       box-shadow: var(--shadow-premium);
       width: 100%;
       max-width: 500px;
@@ -48,7 +48,7 @@
       right: 0;
       height: 6px;
       background: linear-gradient(90deg, var(--primary-gold), var(--accent-gold));
-      border-radius: 24px 24px 0 0;
+      border-radius: 20px 20px 0 0;
     }
     header {
       text-align: center;
@@ -103,7 +103,7 @@
     input[type="text"]:focus {
       border-color: var(--accent-gold);
       background: #fff;
-      box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1);
+      box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.08);
     }
     .file-buttons {
       display: grid;
@@ -208,7 +208,7 @@
     }
     .review-meta-item strong {
       color: var(--text-muted);
-      width: 100px;
+      width: 110px;
     }
     .review-section { margin-top: 15px; }
     .review-section-title {
@@ -433,6 +433,69 @@ async function analyze() {
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('Keine Antwort erhalten.');
     
+    // WORKAROUND: Hexadezimaler Code \x60 für Backticks, um den Parser-Crash zu umgehen!
     let saubererText = text.trim();
-    if (saubererText.startsWith("```")) {
-      saubererText = saubererText.replace(/^
+    const dreiBackticks = "\x60\x60\x60";
+    if (saubererText.startsWith(dreiBackticks)) {
+      saubererText = saubererText.replace(/^\x60\x60\x60(?:json)?/i, "").replace(/\x60\x60\x60$/, "").trim();
+    }
+    const startKlammer = saubererText.indexOf("{");
+    const endKlammer = saubererText.lastIndexOf("}");
+    if (startKlammer !== -1 && endKlammer !== -1) {
+      saubererText = saubererText.substring(startKlammer, endKlammer + 1);
+    }
+
+    const restaurant = JSON.parse(saubererText);
+    
+    const formatierterText = `
+      <div class="review-header">
+        <div class="review-title">🏠 ${restaurant.name}</div>
+        <div class="review-badge">${restaurant.typ}</div>
+      </div>
+      
+      <div class="review-meta-grid">
+        <div class="review-meta-item">
+          <strong>👨‍👩‍👧‍👦 Betriebsart:</strong> <span>${restaurant.betriebsart}</span>
+        </div>
+        <div class="review-meta-item">
+          <strong>⏳ Tradition:</strong> <span>${restaurant.alter}</span>
+        </div>
+        <div class="review-meta-item">
+          <strong>💰 Preisniveau:</strong> <span>${restaurant.preis}</span>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-section-title" style="color: #10b981;">✨ Stärken & Vorzüge</div>
+        <div class="review-bullets positive">
+          ${restaurant.staerken.replace(/\n/g, '<br>')}
+        </div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-section-title" style="color: #ef4444;">⚠️ Schwachpunkte</div>
+        <div class="review-bullets negative">
+          ${restaurant.schwaechen.replace(/\n/g, '<br>')}
+        </div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-section-title" style="color: var(--accent-gold);">📝 Kritiker-Fazit</div>
+        <div class="review-fazit-box">
+          "${restaurant.fazit}"
+        </div>
+      </div>
+    `.trim();
+
+    showResult(formatierterText);
+  } catch (e) {
+    showError('Kritik fehlgeschlagen: ' + e.message);
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) analyze();
+});
+</script>
+</body>
+</html>
