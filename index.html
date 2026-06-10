@@ -365,8 +365,8 @@
 </div>
 
 <script>
-// Geänderter System-Prompt, der die KI anweist, valides JSON als Rohtext auszugeben
-const SYSTEM_PROMPT = 'Du bist ein erfahrener Restaurant-Kritiker. Analysiere das vom Restaurant genannte Restaurant gründlich mithilfe der Google-Suche. Antworte AUSSCHLIESSLICH im folgenden JSON-Format (keine Backticks, kein Markdown, kein Text davor oder danach):\n{\n  "name": "Name",\n  "typ": "Küche/Stil",\n  "betriebsart": "Familienbetrieb oder Kette",\n  "alter": "Tradition/Alter",\n  "preis": "Preisniveau",\n  "staerken": "Stärken (mit Zeilenumbrüchen)",\n  "schwaechen": "Schwächen (mit Zeilenumbrüchen)",\n  "fazit": "Fazit"\n}';
+// Geänderter System-Prompt für maximale JSON-Ausfallsicherheit
+const SYSTEM_PROMPT = 'Du bist ein erfahrener Restaurant-Kritiker. Analysiere das vom Nutzer genannte Restaurant gründlich mithilfe der Google-Suche. Antworte AUSSCHLIESSLICH im folgenden JSON-Format (keine Backticks, kein Markdown, kein Text davor oder danach):\n{\n  "name": "Name",\n  "typ": "Küche/Stil",\n  "betriebsart": "Familienbetrieb oder Kette",\n  "alter": "Tradition/Alter",\n  "preis": "Preisniveau",\n  "staerken": "Stärken (mit Zeilenumbrüchen)",\n  "schwaechen": "Schwächen (mit Zeilenumbrüchen)",\n  "fazit": "Fazit"\n}';
 
 let photoBase64 = null, photoMime = null;
 
@@ -416,7 +416,7 @@ function showResult(text) {
 function showError(message) {
   setLoading(false);
   const output = document.getElementById('output');
-  output.innerHTML = '<div style="color: #b91c1c; font-weight:600; padding:12px; background:#fdf2f2; border-radius:10px; border:1px solid #fca5a5; font-size:13px;">⚠️ ' + message + '</div>';
+  output.innerHTML = '<div style="color: #b91c1c; font-weight:600; padding:12px; background:#fdf2f2; border-radius:10px; border:1px solid #fca5a5; font-size:13px; word-break: break-all;">⚠️ ' + message + '</div>';
   output.style.display = 'block';
 }
 
@@ -496,8 +496,29 @@ async function analyze() {
     }
 
     const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) throw new Error('Keine Antwort erhalten.');
+    console.log('API-Antwort vom Proxy erhalten:', data);
+
+    // Intelligenter, flexibler Parser für jede Form von Proxy-Antwort
+    let text = '';
+    if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+      text = data.candidates[0].content.parts[0].text;
+    } else if (data.text) {
+      text = data.text;
+    } else if (data.response) {
+      text = data.response;
+    } else if (typeof data === 'string') {
+      text = data;
+    } else {
+      // Wenn die Antwort ein völlig anderes Format hat, zeigen wir sie an, um den Fehler zu finden
+      throw new Error('Unerwartete Server-Struktur: ' + JSON.stringify(data));
+    }
+
+    if (!text) {
+      if (data.promptFeedback?.blockReason) {
+        throw new Error('Die Anfrage wurde durch den Sicherheitsfilter blockiert: ' + data.promptFeedback.blockReason);
+      }
+      throw new Error('Der Server hat geantwortet, aber kein Text-Inhalt war in der Antwort vorhanden.');
+    }
     
     // Bereinigung falls Markdown-Backticks mitgeliefert wurden
     let saubererText = text.trim();
@@ -517,6 +538,8 @@ async function analyze() {
     const endKlammer = saubererText.lastIndexOf('}');
     if (startKlammer !== -1 && endKlammer !== -1) {
       saubererText = saubererText.substring(startKlammer, endKlammer + 1);
+    } else {
+      throw new Error('Die Antwort der KI enthält kein lesbares JSON-Format: ' + saubererText);
     }
 
     const restaurant = JSON.parse(saubererText);
