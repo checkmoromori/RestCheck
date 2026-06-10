@@ -317,19 +317,7 @@
 </div>
 
 <script>
-const SYSTEM_PROMPT = `Du bist ein Restaurant-Analyse-Assistent. Wenn du einen Ortsnamen, Restaurant-Namen oder Google Maps Link bekommst, suchst du aktiv im Web nach echten Informationen über dieses Restaurant und gibst eine kompakte Auswertung auf Deutsch aus. WICHTIG: Erfinde keine Details. Gib nur Informationen an die du durch deine Websuche bestätigt hast. Wenn du dir bei einem Detail nicht sicher bist, lass es weg.
-
-Format der Ausgabe — exakt so, keine Einleitungen, keine Quellenlinks, kein Markdown:
-🏠 Name — Der vollständige Name und der Ort des Restaurants
-📍 Typ — Ein Satz. Was ist das für ein Ort?
-⭐ Bewertung — Gesamtnote, Anzahl Rezensionen, kurze Datenbasis-Einschätzung (ein Satz).
-💰 Preis — Nur die Kategorie (€ / €€ / €€€), optional ein Halbsatz zum Verhältnis.
-✅ Stärken — Max. 3 Stichpunkte, je ein kurzer Satz.
-❌ Schwächen — Max. 3 Stichpunkte, je ein kurzer Satz.
-💡 Fazit — Max. 2 Sätze: Lohnt sich der Besuch, Durchreise oder gezielter Ausflug? Nur wenn auffällig: Hinweis auf unnatürliche Bewertungen oder wichtige Infos wie Ruhetage. Falls das Restaurant Teil einer Kette oder Franchise ist, unbedingt erwähnen. Falls ermittelbar: ob es ein Familienbetrieb ist und seit wann es existiert, nur erwähnen wenn durch Suche bestätigt, sonst weglassen.
-
-Wenn du den Ort nicht eindeutig identifizieren kannst, frage kurz nach.
-Wenn ein Foto geliefert wird und du den Namen lesen kannst, nutze ihn direkt. Wenn nicht lesbar, frage nach. Wenn nicht klar, frag nach dem Ort`;
+const SYSTEM_PROMPT = "Du bist ein erfahrener Restaurant-Kritiker. Analysiere das vom Nutzer genannte Restaurant gründlich mithilfe der Google-Suche. Finde heraus, ob es sich um eine Kette/Franchise oder einen unabhängigen Familienbetrieb handelt und wie alt bzw. traditionsreich das Restaurant ist. Fülle das JSON-Schema detailliert, wahrheitsgemäß und in sauberem Deutsch aus.";
 
 let photoBase64 = null, photoMime = null;
 
@@ -432,7 +420,7 @@ async function analyze() {
           system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
           contents: [{ role: 'user', parts }],
           tools: [{ google_search: {} }],
-          generationConfig: { 
+    generationConfig: { 
   temperature: 0.4, 
   maxOutputTokens: 2000,
   responseMimeType: "application/json",
@@ -441,11 +429,13 @@ async function analyze() {
     properties: {
       name: { type: "STRING" },
       typ: { type: "STRING" },
+      betriebsart: { type: "STRING" },
+      alter: { type: "STRING" },
       staerken: { type: "STRING" },
       schwaechen: { type: "STRING" },
       fazit: { type: "STRING" }
     },
-    required: ["name", "typ", "staerken", "schwaechen", "fazit"]
+    required: ["name", "typ", "betriebsart", "alter", "staerken", "schwaechen", "fazit"]
   }
 }
         })
@@ -463,8 +453,11 @@ async function analyze() {
     const restaurant = JSON.parse(text);
     
     // 2. Den Text schön formatiert zusammenbauen
-    const formatierterText = `
+const formatierterText = `
 ### ${restaurant.name} (${restaurant.typ})
+
+**ℹ️ Betriebsart:** ${restaurant.betriebsart}
+**⏳ Alter/Tradition:** ${restaurant.alter}
 
 **👍 Stärken:**
 ${restaurant.staerken}
