@@ -336,6 +336,18 @@ function handlePhoto(input) {
     document.getElementById('galleryBtn').classList.add('has-photo');
     document.getElementById('cameraBtn').innerHTML = '<span class="icon">✓</span><span>Foto geladen</span>';
     document.getElementById('galleryBtn').innerHTML = '<span class="icon">✓</span><span>Foto geladen</span>';
+
+    // NEU: Abfrage für den Ort im Urlaub (Europaweit)
+    setTimeout(() => {
+      const urlaubsort = prompt("In welchem Ort oder Land befindest du dich gerade? (Hilft Gemini, das richtige Restaurant zu finden)");
+      if (urlaubsort) {
+        // Wir suchen dein Orts-Eingabefeld und tragen den Ort dort ein
+        const cityField = document.getElementById('cityInput') || document.querySelector('input[placeholder*="Ort"]');
+        if (cityField) {
+          cityField.value = urlaubsort;
+        }
+      }
+    }, 300); // Kurze Verzögerung, damit das "Foto geladen" zuerst angezeigt wird
   };
   reader.readAsDataURL(file);
 }
