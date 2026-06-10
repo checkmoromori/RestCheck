@@ -398,8 +398,18 @@ function escapeHtml(text) {
 
 async function analyze() {
   const name = document.getElementById('nameInput').value.trim();
-  const city = document.getElementById('cityInput').value.trim();
+  let city = document.getElementById('cityInput').value.trim(); // Geändert zu let, um den Ort eintragen zu können
   const link = document.getElementById('linkInput').value.trim();
+  
+  // ZWINGENDE ABFRAGE: Wenn ein Foto da ist, aber kein Ort eingegeben wurde
+  if (photoBase64 && !city) {
+    const urlaubsort = prompt("In welchem Ort oder Land befindet sich das Restaurant auf dem Foto?");
+    if (urlaubsort) {
+      city = urlaubsort.trim();
+      document.getElementById('cityInput').value = city; // Schreibt es auch sichtbar ins Eingabefeld
+    }
+  }
+
   const parts = [];
 
   if (photoBase64) {
@@ -432,24 +442,25 @@ async function analyze() {
           system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
           contents: [{ role: 'user', parts }],
           tools: [{ google_search: {} }],
-    generationConfig: { 
-  temperature: 0.4, 
-  maxOutputTokens: 2000,
-  responseMimeType: "application/json",
-  responseSchema: {
-    type: "OBJECT",
-    properties: {
-      name: { type: "STRING" },
-      typ: { type: "STRING" },
-      betriebsart: { type: "STRING" },
-      alter: { type: "STRING" },
-      staerken: { type: "STRING" },
-      schwaechen: { type: "STRING" },
-      fazit: { type: "STRING" }
-    },
-    required: ["name", "typ", "betriebsart", "alter", "staerken", "schwaechen", "fazit"]
-  }
-}
+          generationConfig: { 
+            temperature: 0.4, 
+            maxOutputTokens: 2000,
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "OBJECT",
+              properties: {
+                name: { type: "STRING" },
+                typ: { type: "STRING" },
+                betriebsart: { type: "STRING" },
+                alter: { type: "STRING" },
+                preis: { type: "STRING" },
+                staerken: { type: "STRING" },
+                schwaechen: { type: "STRING" },
+                fazit: { type: "STRING" }
+              },
+              required: ["name", "typ", "betriebsart", "alter", "preis", "staerken", "schwaechen", "fazit"]
+            }
+          }
         })
       }
     );
@@ -465,11 +476,12 @@ async function analyze() {
     const restaurant = JSON.parse(text);
     
     // 2. Den Text schön formatiert zusammenbauen
-const formatierterText = `
+    const formatierterText = `
 ### ${restaurant.name} (${restaurant.typ})
 
 **ℹ️ Betriebsart:** ${restaurant.betriebsart}
 **⏳ Alter/Tradition:** ${restaurant.alter}
+**💰 Preisniveau:** ${restaurant.preis}
 
 **👍 Stärken:**
 ${restaurant.staerken}
