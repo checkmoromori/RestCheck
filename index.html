@@ -412,13 +412,21 @@ async function analyze() {
 
   const parts = [];
 
-  if (photoBase64) {
-    setLoading('Foto wird analysiert...');
+if (photoBase64) {
+    setLoading('Foto und Ort werden analysiert...');
     parts.push({ inlineData: { mimeType: photoMime, data: photoBase64 } });
-    let textPart = 'Bitte analysiere dieses Restaurant-Foto.';
-    if (name) textPart += ` Name laut Nutzer: ${name}.`;
-    if (city) textPart += ` Ort: ${city}.`;
+    
+    // Hier machen wir die Anweisung für Gemini absolut unmissverständlich:
+    let textPart = 'Lies den Restaurantnamen von diesem Foto ab.';
+    if (city) {
+      textPart += ` Das Restaurant befindet sich in: ${city}.`;
+    }
+    textPart += ' Nutze die Google-Suche, um Details über dieses Restaurant zu finden, und fülle das verlangte JSON-Schema komplett aus.';
+    
+    if (name) textPart += ` (Der Nutzer glaubt, es heißt: ${name})`;
+    
     parts.push({ text: textPart });
+  }
   } else if (link) {
     setLoading('Link wird verarbeitet...');
     parts.push({ text: `Analysiere diesen Google Maps Link: ${link}` });
