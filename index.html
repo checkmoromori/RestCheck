@@ -44,7 +44,6 @@
       position: relative;
     }
 
-    /* Goldener und roter Akzent am oberen Rand */
     .container::before {
       content: '';
       position: absolute;
@@ -205,7 +204,7 @@
       margin-top: 30px;
       padding: 25px;
       border-radius: 12px;
-      background: #fffdfa; /* Edles Pergament */
+      background: #fffdfa;
       border: 1px solid rgba(180, 138, 61, 0.15);
       display: none;
       line-height: 1.6;
@@ -366,7 +365,8 @@
 </div>
 
 <script>
-const SYSTEM_PROMPT = 'Du bist ein erfahrener Restaurant-Kritiker. Analysiere das vom Nutzer genannte Restaurant gründlich mithilfe der Google-Suche. Finde heraus, ob es sich um eine Kette/Franchise oder einen unabhängigen Familienbetrieb handelt und wie alt bzw. traditionsreich das Restaurant ist. Fülle das JSON-Schema detailliert, wahrheitsgemäß und in sauberem Deutsch aus.';
+// Geänderter System-Prompt, der die KI anweist, valides JSON als Rohtext auszugeben
+const SYSTEM_PROMPT = 'Du bist ein erfahrener Restaurant-Kritiker. Analysiere das vom Restaurant genannte Restaurant gründlich mithilfe der Google-Suche. Antworte AUSSCHLIESSLICH im folgenden JSON-Format (keine Backticks, kein Markdown, kein Text davor oder danach):\n{\n  "name": "Name",\n  "typ": "Küche/Stil",\n  "betriebsart": "Familienbetrieb oder Kette",\n  "alter": "Tradition/Alter",\n  "preis": "Preisniveau",\n  "staerken": "Stärken (mit Zeilenumbrüchen)",\n  "schwaechen": "Schwächen (mit Zeilenumbrüchen)",\n  "fazit": "Fazit"\n}';
 
 let photoBase64 = null, photoMime = null;
 
@@ -454,17 +454,18 @@ async function analyze() {
     parts.push({ inlineData: { mimeType: photoMime, data: photoBase64 } });
     let textPart = 'Bitte lies den Restaurantnamen von diesem Schild ab.';
     if (city) textPart += ' Das Restaurant befindet sich in: ' + city + '.';
-    textPart += ' Nutze die Google-Suche, um es zu finden und fülle das JSON-Schema aus.';
+    textPart += ' Nutze die Google-Suche, um es zu finden und gib die Daten als reines JSON zurück.';
     if (name) textPart += ' (Nutzerhinweis zum Namen: ' + name + ')';
     parts.push({ text: textPart });
   } else if (link) {
     setLoading('Link wird verarbeitet...');
-    parts.push({ text: 'Analysiere diesen Google Maps Link: ' + link });
+    parts.push({ text: 'Analysiere diesen Google Maps Link und gib das JSON aus: ' + link });
   } else if (name) {
     setLoading('Gourmet-Datenbank wird durchsucht...');
     let text = 'Analysiere das Restaurant: ' + name;
     if (city) text += ' in ' + city;
-    parts.push({ text });
+    text += '. Gib das Ergebnis als reines JSON aus.';
+    parts.push({ text: text });
   } else {
     showError('Bitte gib einen Restaurant-Namen, einen Link oder lade ein Foto hoch.');
     return;
@@ -482,23 +483,8 @@ async function analyze() {
           contents: [{ role: 'user', parts: parts }],
           tools: [{ google_search: {} }],
           generationConfig: { 
-            temperature: 0.4, 
-            maxOutputTokens: 2000,
-            responseMimeType: 'application/json',
-            responseSchema: {
-              type: 'OBJECT',
-              properties: {
-                name: { type: 'STRING' },
-                typ: { type: 'STRING' },
-                betriebsart: { type: 'STRING' },
-                alter: { type: 'STRING' },
-                preis: { type: 'STRING' },
-                staerken: { type: 'STRING' },
-                schwaechen: { type: 'STRING' },
-                fazit: { type: 'STRING' }
-              },
-              required: ['name', 'typ', 'betriebsart', 'alter', 'preis', 'staerken', 'schwaechen', 'fazit']
-            }
+            temperature: 0.3, 
+            maxOutputTokens: 2000
           }
         })
       }
@@ -513,8 +499,7 @@ async function analyze() {
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('Keine Antwort erhalten.');
     
-    // BACKTICK-FREIER WORKAROUND:
-    // Wir erzeugen das Backtick-Zeichen über String.fromCharCode(96), um Parsing-Crashes zu umgehen!
+    // Bereinigung falls Markdown-Backticks mitgeliefert wurden
     let saubererText = text.trim();
     const backticks = String.fromCharCode(96, 96, 96);
     if (saubererText.indexOf(backticks) === 0) {
