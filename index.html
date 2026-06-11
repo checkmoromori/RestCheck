@@ -248,10 +248,11 @@
       border: 1px solid #f5f5f4;
     }
 
-    .review-meta-item {
+.review-meta-item {
       display: flex;
       flex-direction: column; /* Icon/Titel über dem Wert oder kompakt linksbündig */
       align-items: flex-start; /* Linksbündig statt zentriert */
+      text-align: left;        /* GARANTIERT die Linksbündigkeit gegen Vererbung! */
       font-size: 14px;
       line-height: 1.4;
     }
@@ -311,13 +312,11 @@
 
 <div class="container">
 
-  <div id="inputForm"> <header>
+  <div id="inputForm">
+    <header>
       <h1>🍽️ Rest<span>Check</span></h1>
-
-  <header>
-    <h1>🍽️ Rest<span>Check</span></h1>
-    <div class="subtitle">Echte Kritiken in Echtzeit</div>
-  </header>
+      <div class="subtitle">Echte Kritiken in Echtzeit</div>
+    </header>
   
   <div class="input-group">
     <label for="nameInput">Name des Restaurants</label>
@@ -328,7 +327,7 @@
   </div>
 
   <div class="input-group">
-    <label for="cityInput">Ort / Stadt (Europaweit)</label>
+    <label for="cityInput">Ort / Stadt</label>
     <div class="input-wrapper">
       <span class="input-icon">📍</span>
       <input type="text" id="cityInput" placeholder="Z. B. Aalen oder Rom">
@@ -355,7 +354,7 @@
   </div>
 
   <img id="previewImg" alt="Vorschau">
-  
+
 <button class="submit-btn" onclick="analyze()">Kritik erstellen</button>
   </div> <div class="loading-spinner" id="spinner">Der Gourmet-Kritiker recherchiert...</div>
   <div id="output"></div>
