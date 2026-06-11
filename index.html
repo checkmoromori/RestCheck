@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RestCheck - Der Gourmet-Kritiker</title>
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="RestCheck">
+  <link rel="apple-touch-icon" href="grafik.png">
+  <link rel="icon" type="image/png" href="grafik.png">
+
   <style>
     :root {
       --bg-color: #fdfbf9; /* Warmes Champagner-Weiß */
@@ -237,7 +244,7 @@
       letter-spacing: 1px;
     }
 
-.review-meta-grid {
+    .review-meta-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Nutzt die volle Breite in Spalten aus */
       gap: 15px;
@@ -248,11 +255,11 @@
       border: 1px solid #f5f5f4;
     }
 
-.review-meta-item {
+    .review-meta-item {
       display: flex;
-      flex-direction: column; /* Icon/Titel über dem Wert oder kompakt linksbündig */
+      flex-direction: column; /* Icon/Titel über dem Wert */
       align-items: flex-start; /* Linksbündig statt zentriert */
-      text-align: left;        /* GARANTIERT die Linksbündigkeit gegen Vererbung! */
+      text-align: left;        /* Garantiert Linksbuendigkeit gegen Vererbung */
       font-size: 14px;
       line-height: 1.4;
     }
@@ -312,56 +319,56 @@
 
 <div class="container">
 
-  <div id="inputForm">
+  <div id="inputForm"> 
     <header>
       <h1>🍽️ Rest<span>Check</span></h1>
       <div class="subtitle">Echte Kritiken in Echtzeit</div>
     </header>
-  
-  <div class="input-group">
-    <label for="nameInput">Name des Restaurants</label>
-    <div class="input-wrapper">
-      <span class="input-icon">🏢</span>
-      <input type="text" id="nameInput" placeholder="Z. B. Aposto">
+    
+    <div class="input-group">
+      <label for="nameInput">Name des Restaurants</label>
+      <div class="input-wrapper">
+        <span class="input-icon">🏢</span>
+        <input type="text" id="nameInput" placeholder="Z. B. Aposto">
+      </div>
     </div>
-  </div>
 
-  <div class="input-group">
-    <label for="cityInput">Ort / Stadt</label>
-    <div class="input-wrapper">
-      <span class="input-icon">📍</span>
-      <input type="text" id="cityInput" placeholder="Z. B. Aalen oder Rom">
+    <div class="input-group">
+      <label for="cityInput">Ort / Stadt (Europaweit)</label>
+      <div class="input-wrapper">
+        <span class="input-icon">📍</span>
+        <input type="text" id="cityInput" placeholder="Z. B. Aalen oder Rom">
+      </div>
     </div>
-  </div>
 
-  <div class="input-group">
-    <label for="linkInput">Google Maps Link (Alternativ)</label>
-    <div class="input-wrapper">
-      <span class="input-icon">🔗</span>
-      <input type="text" id="linkInput" placeholder="Link hier einfügen...">
+    <div class="input-group">
+      <label for="linkInput">Google Maps Link (Alternativ)</label>
+      <div class="input-wrapper">
+        <span class="input-icon">🔗</span>
+        <input type="text" id="linkInput" placeholder="Link hier einfügen...">
+      </div>
     </div>
-  </div>
 
-  <div class="file-buttons">
-    <label class="file-btn" id="cameraBtn">
-      <span>📸 Kamera</span>
-      <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(this)">
-    </label>
-    <label class="file-btn" id="galleryBtn">
-      <span>🖼️ Galerie</span>
-      <input type="file" accept="image/*" onchange="handlePhoto(this)">
-    </label>
-  </div>
+    <div class="file-buttons">
+      <label class="file-btn" id="cameraBtn">
+        <span>📸 Kamera</span>
+        <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(this)">
+      </label>
+      <label class="file-btn" id="galleryBtn">
+        <span>🖼️ Galerie</span>
+        <input type="file" accept="image/*" onchange="handlePhoto(this)">
+      </label>
+    </div>
 
-  <img id="previewImg" alt="Vorschau">
-
-<button class="submit-btn" onclick="analyze()">Kritik erstellen</button>
-  </div> <div class="loading-spinner" id="spinner">Der Gourmet-Kritiker recherchiert...</div>
+    <img id="previewImg" alt="Vorschau">
+    
+    <button class="submit-btn" onclick="analyze()">Kritik erstellen</button>
+  </div> 
+  <div class="loading-spinner" id="spinner">Der Gourmet-Kritiker recherchiert...</div>
   <div id="output"></div>
 </div>
 
 <script>
-// Geänderter System-Prompt für maximale JSON-Ausfallsicherheit
 const SYSTEM_PROMPT = 'Du bist ein erfahrener Restaurant-Kritiker. Analysiere das vom Nutzer genannte Restaurant gründlich mithilfe der Google-Suche. Antworte AUSSCHLIESSLICH im folgenden JSON-Format (keine Backticks, kein Markdown, kein Text davor oder danach):\n{\n  "name": "Name",\n  "typ": "Küche/Stil",\n  "betriebsart": "Familienbetrieb oder Kette",\n  "alter": "Tradition/Alter",\n  "preis": "Preisniveau",\n  "staerken": "Stärken (mit Zeilenumbrüchen)",\n  "schwaechen": "Schwächen (mit Zeilenumbrüchen)",\n  "fazit": "Fazit"\n}';
 
 let photoBase64 = null, photoMime = null;
@@ -494,7 +501,6 @@ async function analyze() {
     const data = await response.json();
     console.log('API-Antwort vom Proxy erhalten:', data);
 
-    // Intelligenter, flexibler Parser für jede Form von Proxy-Antwort
     let text = '';
     if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
       text = data.candidates[0].content.parts[0].text;
@@ -505,7 +511,6 @@ async function analyze() {
     } else if (typeof data === 'string') {
       text = data;
     } else {
-      // Wenn die Antwort ein völlig anderes Format hat, zeigen wir sie an, um den Fehler zu finden
       throw new Error('Unerwartete Server-Struktur: ' + JSON.stringify(data));
     }
 
@@ -516,7 +521,6 @@ async function analyze() {
       throw new Error('Der Server hat geantwortet, aber kein Text-Inhalt war in der Antwort vorhanden.');
     }
     
-    // Bereinigung falls Markdown-Backticks mitgeliefert wurden
     let saubererText = text.trim();
     const backticks = String.fromCharCode(96, 96, 96);
     if (saubererText.indexOf(backticks) === 0) {
@@ -579,17 +583,16 @@ async function analyze() {
     formatierterText += '  </div>';
     formatierterText += '</div>';
 
-// --- AB HIER NEU: Blendet das komplette Eingabeformular auf einmal aus ---
+    // Blendet das komplette Eingabeformular aus
     const form = document.getElementById('inputForm');
     if (form) form.style.display = 'none';
 
-    // Ein eleganter Mini-Header für die Kritik-Seite oben ankleben
+    // Ein eleganter Mini-Header für die neue Kritik-Seite
     let kritikHeader = '<div class="review-header" style="margin-bottom: 25px;"><h1 style="font-family: Georgia, serif; font-size: 24px;">🍽️ Rest<span style="color: var(--michelin-red);">Check</span></h1><div class="subtitle" style="font-size: 9px; color: var(--accent-gold); letter-spacing: 2px;">Exklusive Gourmet-Analyse</div></div>';
     formatierterText = kritikHeader + formatierterText;
 
-    // Fügt den "Zurück"-Button ans Ende der Kritik an
+    // Fügt den "Zurück"-Button ans Ende an
     formatierterText += '<button onclick="window.location.reload()" style="margin-top: 30px; width: 100%; padding: 12px; background: none; border: 1px solid var(--accent-gold); color: var(--accent-gold); border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Neue Kritik erstellen</button>';
-    // -------------------------------------------------------------------------
 
     showResult(formatierterText);
   } catch (e) {
