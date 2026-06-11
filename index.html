@@ -237,38 +237,32 @@
       letter-spacing: 1px;
     }
 
-    .review-meta-grid {
+.review-meta-grid {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Nutzt die volle Breite in Spalten aus */
+      gap: 15px;
       margin-bottom: 20px;
       background: #fafaf9;
-      padding: 15px;
+      padding: 15px 20px;
       border-radius: 8px;
       border: 1px solid #f5f5f4;
     }
 
     .review-meta-item {
       display: flex;
+      flex-direction: column; /* Icon/Titel über dem Wert oder kompakt linksbündig */
+      align-items: flex-start; /* Linksbündig statt zentriert */
       font-size: 14px;
+      line-height: 1.4;
     }
 
     .review-meta-item strong {
       color: var(--text-muted);
-      width: 120px;
-    }
-
-    .review-section {
-      margin-top: 20px;
-    }
-
-    .review-section-title {
-      font-size: 11px;
-      font-weight: 800;
+      width: auto;
+      margin-bottom: 2px;
+      font-size: 12px;
       text-transform: uppercase;
-      margin-bottom: 8px;
-      letter-spacing: 1.5px;
-      color: var(--text-muted);
+      letter-spacing: 0.5px;
     }
 
     .review-bullets {
@@ -316,6 +310,10 @@
 <body>
 
 <div class="container">
+
+  <div id="inputForm"> <header>
+      <h1>🍽️ Rest<span>Check</span></h1>
+
   <header>
     <h1>🍽️ Rest<span>Check</span></h1>
     <div class="subtitle">Echte Kritiken in Echtzeit</div>
@@ -357,10 +355,9 @@
   </div>
 
   <img id="previewImg" alt="Vorschau">
-
-  <button class="submit-btn" onclick="analyze()">Kritik erstellen</button>
-
-  <div class="loading-spinner" id="spinner">Der Gourmet-Kritiker recherchiert...</div>
+  
+<button class="submit-btn" onclick="analyze()">Kritik erstellen</button>
+  </div> <div class="loading-spinner" id="spinner">Der Gourmet-Kritiker recherchiert...</div>
   <div id="output"></div>
 </div>
 
@@ -583,17 +580,17 @@ async function analyze() {
     formatierterText += '  </div>';
     formatierterText += '</div>';
 
-    // --- AB HIER NEU: Blendet die Formular-Elemente aus ---
-    document.querySelector('header').style.display = 'none';
-    document.querySelectorAll('.input-group').forEach(el => el.style.display = 'none');
-    document.querySelector('.file-buttons').style.display = 'none';
-    const preview = document.getElementById('previewImg');
-    if (preview) preview.style.display = 'none';
-    document.querySelector('.submit-btn').style.display = 'none';
+// --- AB HIER NEU: Blendet das komplette Eingabeformular auf einmal aus ---
+    const form = document.getElementById('inputForm');
+    if (form) form.style.display = 'none';
+
+    // Ein eleganter Mini-Header für die Kritik-Seite oben ankleben
+    let kritikHeader = '<div class="review-header" style="margin-bottom: 25px;"><h1 style="font-family: Georgia, serif; font-size: 24px;">🍽️ Rest<span style="color: var(--michelin-red);">Check</span></h1><div class="subtitle" style="font-size: 9px; color: var(--accent-gold); letter-spacing: 2px;">Exklusive Gourmet-Analyse</div></div>';
+    formatierterText = kritikHeader + formatierterText;
 
     // Fügt den "Zurück"-Button ans Ende der Kritik an
     formatierterText += '<button onclick="window.location.reload()" style="margin-top: 30px; width: 100%; padding: 12px; background: none; border: 1px solid var(--accent-gold); color: var(--accent-gold); border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Neue Kritik erstellen</button>';
-    // ------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     showResult(formatierterText);
   } catch (e) {
