@@ -39,7 +39,7 @@
       border-radius: 16px;
       box-shadow: var(--shadow-premium);
       width: 100%;
-      max-width: 500px;
+      max-width: 700px;
       border: 1px solid var(--border-color);
       position: relative;
     }
@@ -582,6 +582,18 @@ async function analyze() {
     formatierterText += '    "' + restaurant.fazit + '"';
     formatierterText += '  </div>';
     formatierterText += '</div>';
+
+    // --- AB HIER NEU: Blendet die Formular-Elemente aus ---
+    document.querySelector('header').style.display = 'none';
+    document.querySelectorAll('.input-group').forEach(el => el.style.display = 'none');
+    document.querySelector('.file-buttons').style.display = 'none';
+    const preview = document.getElementById('previewImg');
+    if (preview) preview.style.display = 'none';
+    document.querySelector('.submit-btn').style.display = 'none';
+
+    // Fügt den "Zurück"-Button ans Ende der Kritik an
+    formatierterText += '<button onclick="window.location.reload()" style="margin-top: 30px; width: 100%; padding: 12px; background: none; border: 1px solid var(--accent-gold); color: var(--accent-gold); border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Neue Kritik erstellen</button>';
+    // ------------------------------------------------------
 
     showResult(formatierterText);
   } catch (e) {
